@@ -50,7 +50,7 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     # SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data-dev.db')
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:lp120077@106.52.108.17:4312/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:/lin-cms'
 
 
 class TestingConfig(BaseConfig):
@@ -61,7 +61,7 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:lp120077@106.52.108.17:4312/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root::4312/lin-cms'
 
 
 config = {
