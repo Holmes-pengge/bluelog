@@ -8,18 +8,39 @@ __author__ = 'lipeng'
 
 from flask import Flask
 from flask import jsonify
+from flask_sqlalchemy import SQLAlchemy
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
+from datetime import datetime
 
-from models import Product
-
+db = SQLAlchemy()
+# from models import Product
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:lp120077@106.52.108.17:4312/lin-cms'
 
+db.init_app(app)
+
+
+class Product(db.Model):
+    __tablename__ = 'product_1688'
+    # id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Text)
+    seller_name = db.Column(db.Text)
+    title = db.Column(db.Text)
+    delivery_location = db.Column(db.Text)
+    url = db.Column(db.Text)
+    update_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Product {}>'.format(self.__tablename__)
 
 @app.route('/')
 def index():
-    return 'Hello, World!'
+    user_agent = request.headers.get('User-Agent')
+    return 'Hello, World. \r\n' + user_agent
 
 
 @app.route('/user/<name>')
@@ -38,10 +59,21 @@ def show_product(day):
     print("搜索近{}天的数据".format(day))
     print(dir(Product))
     # day = request.args.get('day', 1, type=int)
-    # result = Product.query.filter(Product.update_time < '2020-12-28 00:00:00').all()
-    result = Product.query.first()
-    print("==========result: ", result)
-    return jsonify({'a': 10000})
+    product = Product.query.filter(Product.update_time < '2020-12-28 00:00:00').first()
+    # result = Product.query.first()
+    print("==========result: ", product)
+    item_id = product.item_id
+    price = product.price
+    # seller_name = db.Column(db.Text)
+    # title = db.Column(db.Text)
+    # delivery_location = db.Column(db.Text)
+    # url = db.Column(db.Text)
+    # update_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    return jsonify({
+        'item_id': item_id,
+        'price': price,
+    })
 
 
 # @app.route('/')
