@@ -11,7 +11,7 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
-from datetime import datetime
+from datetime import datetime, timedelta
 
 db = SQLAlchemy()
 # from models import Product
@@ -56,24 +56,38 @@ def user(name):
 
 @app.route('/product/<int:day>')
 def show_product(day):
+    now = datetime.utcnow()
+    last_day = now - timedelta(days=day)  # 最近1天
     print("搜索近{}天的数据".format(day))
-    print(dir(Product))
+    # print(dir(Product))
     # day = request.args.get('day', 1, type=int)
-    product = Product.query.filter(Product.update_time < '2020-12-28 00:00:00').first()
+    # product = Product.query.filter(Product.update_time < '2020-12-28 00:00:00').first()
+    product_ls = Product.query.filter(Product.update_time > last_day).all()
     # result = Product.query.first()
-    print("==========result: ", product)
-    item_id = product.item_id
-    price = product.price
+    print("==========result: ", len(product_ls))
+    # item_id = product.item_id
+    # price = product.price
     # seller_name = db.Column(db.Text)
     # title = db.Column(db.Text)
     # delivery_location = db.Column(db.Text)
     # url = db.Column(db.Text)
     # update_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-
-    return jsonify({
-        'item_id': item_id,
-        'price': price,
-    })
+    page = []
+    for product in product_ls:
+        page.append({
+            "item_id": product.item_id,
+            "price": product.price,
+            "seller_name": product.seller_name,
+            "title": product.title,
+            "delivery_location": product.delivery_location,
+            "url": product.url,
+            "update_time": product.update_time,
+        })
+    # return "======="
+    return jsonify(page)
+    #     'item_id': item_id,
+    #     'price': price,
+    # })
 
 
 # @app.route('/')
